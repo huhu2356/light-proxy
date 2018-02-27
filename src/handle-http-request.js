@@ -19,17 +19,39 @@ function handleHttpRequest(request, response) {
     console.log('got connected!');
 
     // make a request over an HTTP tunnel
-    const httpStr = request.method + ' ' + parseURL.path + ' HTTP/1.1\r\n' +
-      'Host: ' + parseURL.host + '\r\n' + 
-      'Connection: close\r\n' +
-      '\r\n';
+    // const httpStr = request.method + ' ' + parseURL.path + ' HTTP/1.1\r\n' +
+    //   'Host: ' + parseURL.host + '\r\n' + 
+    //   'Connection: close\r\n' +
+    //   '\r\n';
 
-    socket.write(httpStr);
+    // socket.write(httpStr);
+
+    socket.write(getHttpReqStr(request, parseURL));
+
+    request.pipe(socket);
 
     socket.pipe(response.socket);
   });
 
   conReq.end();
+}
+
+function getHttpReqStr(req, url) {
+  let reqStr = '';
+  reqStr += req.method + ' ' + url.path + ' HTTP/' + req.httpVersion + '\r\n';
+  for (let key in req.headers) {
+    if (key !== 'connection') {
+      reqStr += key + ': ' + req.headers[key] + '\r\n';
+    } else {
+      reqStr += key + ': ' + 'close\r\n';
+    }
+  }
+  if (!req.headers.hasOwnProperty('connection')) {
+    reqStr += 'connection: close\r\n';
+  }
+  reqStr += '\r\n';
+
+  return reqStr;
 }
 
 module.exports = handleHttpRequest;
