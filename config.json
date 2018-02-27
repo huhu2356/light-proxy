@@ -1,0 +1,12 @@
+{
+  "client": {
+    "port": 12345
+  },
+  "servers": [
+    {
+      "hostname": "127.0.0.1",
+      "port": 1337
+    }
+  ],
+  "server": 0
+}

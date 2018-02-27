@@ -3,13 +3,14 @@ const http = require('http');
 
 function handleHttpRequest(request, response) {
   const parseURL = url.parse(request.url);
+  const dstPath = `${parseURL.hostname}:${parseURL.port || 80}`;
 
   // make a request to a tunneling proxy
   const options = {
-    port: 1337,
-    hotstname: '127.0.0.1',
+    port: config.servers[config.server].port,
+    hotstname: config.servers[config.server].hostname,
     method: 'CONNECT',
-    path: parseURL.host + ':80'
+    path: dstPath
   };
 
   const conReq = http.request(options);
@@ -26,14 +27,6 @@ function handleHttpRequest(request, response) {
     socket.write(httpStr);
 
     socket.pipe(response.socket);
-    
-    // socket.on('data', (chunk) => {
-    //   response.socket.write(chunk);
-    // });
-
-    // socket.on('end', () => {
-    //   response.socket.end();
-    // });
   });
 
   conReq.end();

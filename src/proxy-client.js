@@ -2,6 +2,8 @@ const http = require('http');
 
 const handleHttpRequest = require('./handle-http-request');
 
+global['config'] = require('../config');
+
 http.createServer()
   .on('request', handleHttpRequest)
-  .listen(12345, () => console.log('client proxy listen on 12345'));
+  .listen(config.client.port);
