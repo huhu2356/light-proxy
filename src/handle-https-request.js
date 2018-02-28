@@ -1,6 +1,5 @@
 const url = require('url');
 const http = require('http');
-const net = require('net');
 
 function handleHttpsRequest(request, cltSocket, cltHead) {
   const parseURL = url.parse(request.url.includes('http://') ? request.url : 'http://' + request.url);
@@ -9,7 +8,7 @@ function handleHttpsRequest(request, cltSocket, cltHead) {
   // make a request to a tunneling proxy
   const options = {
     port: config.servers[config.server].port,
-    hotstname: config.servers[config.server].hostname,
+    hostname: config.servers[config.server].hostname,
     method: 'CONNECT',
     path: dstPath
   };
@@ -23,6 +22,11 @@ function handleHttpsRequest(request, cltSocket, cltHead) {
     cltSocket.pipe(srvSocket);
     srvSocket.pipe(cltSocket);
   });
+
+  conReq.on('error', (err) => {
+    console.log(err);
+    console.log(options);
+  })
 
   conReq.end();
 }

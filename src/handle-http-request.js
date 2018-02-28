@@ -8,7 +8,7 @@ function handleHttpRequest(request, response) {
   // make a request to a tunneling proxy
   const options = {
     port: config.servers[config.server].port,
-    hotstname: config.servers[config.server].hostname,
+    hostname: config.servers[config.server].hostname,
     method: 'CONNECT',
     path: dstPath
   };
@@ -32,6 +32,11 @@ function handleHttpRequest(request, response) {
 
     socket.pipe(response.socket);
   });
+
+  conReq.on('error', (err) => {
+    console.log(err);
+    console.log(options);
+  })
 
   conReq.end();
 }
