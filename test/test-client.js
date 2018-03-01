@@ -1,17 +1,22 @@
-const net = require('net');
-const server = net.createServer((c) => {
-  // 'connection' listener
-  console.log('client connected');
-  c.on('end', () => {
-    console.log('client disconnected');
-  });
-  c.on('data', chunk => {
-    console.log(chunk.toString());
-  })
+var fs = require('fs');
+
+var source = fs.createReadStream('source.txt');
+var dest1 = fs.createWriteStream('dest1.txt');
+var dest2 = fs.createWriteStream('dest2.txt');
+
+source.pipe(dest1, {
+  end: false
 });
-server.on('error', (err) => {
-  throw err;
+
+source.on('end', () => {
+  dest1.end('ok');
 });
-server.listen(8124, () => {
-  console.log('server bound');
+
+const writer = dest2;
+for (let i = 0; i < 100; i++) {
+  writer.write(`hello, #${i}!\n`);
+}
+writer.end('This is the end\n');
+writer.on('finish', () => {
+  console.error('All writes are now complete.');
 });
