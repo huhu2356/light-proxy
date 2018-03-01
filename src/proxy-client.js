@@ -8,4 +8,7 @@ global['config'] = require('../config');
 http.createServer()
   .on('request', handleHttpRequest)
   .on('connect', handleHttpsRequest)
+  .on('error', (err) => {
+    console.log(err);
+  })
   .listen(config.client.port);

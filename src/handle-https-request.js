@@ -21,6 +21,7 @@ function handleHttpsRequest(request, cltSocket, cltHead) {
   const conReq = http.request(options);
 
   conReq.on('connect', (res, srvSocket, srvHead) => {
+    console.log(srvSocket.localPort);
     cltSocket.write('HTTP/1.1 200 Connection Established\r\n\r\n');
 
     srvSocket.write(cltHead);

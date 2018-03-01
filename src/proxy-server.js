@@ -18,7 +18,7 @@ proxyServer.on('connect', (req, cltSocket, head) => {
   const srvSocket = net.connect(srvUrl.port, srvUrl.hostname, () => {
     cltSocket.write('HTTP/1.1 200 Connection Established\r\n\r\n');
     
-    if (srvUrl.port !== 443) {
+    if (srvUrl.port == 80) {
       const decipher = crypto.createDecipher(config.crypto.algorithm, config.crypto.password);
       cltSocket.pipe(decipher).pipe(srvSocket);
     } else {
@@ -26,6 +26,10 @@ proxyServer.on('connect', (req, cltSocket, head) => {
     }
     
     srvSocket.pipe(cltSocket);
+  });
+
+  srvSocket.on('error', (err) => {
+    console.log(err);
   });
 });
 

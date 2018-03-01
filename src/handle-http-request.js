@@ -51,7 +51,7 @@ function handleHttpRequest(request, response) {
 
   conReq.on('error', (err) => {
     console.log(err);
-    console.log(options);
+    console.log(dstPath);
   })
 
   conReq.end();
