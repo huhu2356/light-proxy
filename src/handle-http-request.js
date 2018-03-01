@@ -1,16 +1,22 @@
 const url = require('url');
 const http = require('http');
+const crypto = require('crypto');
+const { Readable } = require('stream');
 
 function handleHttpRequest(request, response) {
   const parseURL = url.parse(request.url);
   const dstPath = `${parseURL.hostname}:${parseURL.port || 80}`;
+
+  const cipher = crypto.createCipher(config.crypto.algorithm, config.crypto.password);
+  let encryptedDstPath = cipher.update(dstPath, 'utf8', 'hex');
+  encryptedDstPath += cipher.final('hex');
 
   // make a request to a tunneling proxy
   const options = {
     port: config.servers[config.server].port,
     hostname: config.servers[config.server].hostname,
     method: 'CONNECT',
-    path: dstPath
+    path: encryptedDstPath
   };
 
   const conReq = http.request(options);
@@ -26,9 +32,19 @@ function handleHttpRequest(request, response) {
 
     // socket.write(httpStr);
 
-    socket.write(getHttpReqStr(request, parseURL));
+    // socket.write(getHttpReqStr(request, parseURL));
 
-    request.pipe(socket);
+    // request.pipe(socket);
+
+    const httpHeaderReadable = new Readable();
+    httpHeaderReadable.push(getHttpReqStr(request, parseURL));
+    httpHeaderReadable.push(null);
+
+    const cipher = crypto.createCipher(config.crypto.algorithm, config.crypto.password);
+    httpHeaderReadable.pipe(cipher, { end: false });
+    httpHeaderReadable.on('end', () => {
+      request.pipe(cipher).pipe(socket);
+    });
 
     socket.pipe(response.socket);
   });

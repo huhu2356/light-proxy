@@ -8,5 +8,9 @@
       "port": 14567
     }
   ],
-  "server": 0
+  "server": 0,
+  "crypto": {
+    "algorithm": "aes-256-cfb",
+    "password": "huhu2356"
+  }
 }
