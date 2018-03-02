@@ -29,7 +29,7 @@
 
 - TCP PSH flag function ?
 
-haha, 此外vscode如何同时开启同个debugger,剩下最主要的就是配合postman发送请求和wireshark抓包分析了
+haha, 此外vscode如何同时开启多个debugger,剩下最主要的就是配合postman发送请求和wireshark抓包分析了
 
 参考：
 
